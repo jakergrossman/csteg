@@ -28,7 +28,7 @@ void abort_msg(const char* fmt, ...) {
 }
 
 void print_usage() {
-	printf("Usage: csteg -w -i png_in -d data_in -o png_out\n");
+	printf("Usage: csteg -w -i png_in -d data_file_in -o png_out\n");
 	printf("       csteg -r -i png_in\n");
 }
 

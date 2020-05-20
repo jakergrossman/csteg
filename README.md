@@ -10,12 +10,12 @@ make
 ```
 
 ## Usage
-To encode data:
+To encode files:
 ```
-csteg -w -i png_in -d data_in -o png_out
+csteg -w -i png_in -d data_file_in -o png_out
 ```
 
-To decode data:
+To decode files:
 ```
 csteg -r -i png_in
 ```
