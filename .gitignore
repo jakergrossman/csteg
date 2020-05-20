@@ -1,3 +1,6 @@
 .DS_Store
 csteg
 csteg.dSYM
+*.txt
+*.png
+!LICENSE.txt
