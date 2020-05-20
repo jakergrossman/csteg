@@ -356,6 +356,9 @@ void write_data(char* png_filename_in,char* png_filename_out, char* data_filenam
 
 	// write png
 	write_png_file(png_filename_out);
+
+	// cleanup allocated memory
+	free(signature);
 }
 
 void read_data(char* filename) {
