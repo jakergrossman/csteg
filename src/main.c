@@ -11,7 +11,7 @@
 #include <stdlib.h> // malloc
 #include <stdint.h> // uint8_t
 #include <string.h> // strlen
-#include <unistd.h> // getopt
+#include <unistd.h> // getopt, access
 #include <png.h> // libpng
 
 // the number of bits used to store sizes in the signature
@@ -28,8 +28,8 @@ void abort_msg(const char* fmt, ...) {
 }
 
 void print_usage() {
-	printf("Usage: csteg -w -i png_in -d data_file_in -o png_out\n");
-	printf("       csteg -r -i png_in\n");
+	printf("Usage: csteg [-f] -w -i png_in -d data_file_in -o png_out\n");
+	printf("       csteg [-f] -r -i png_in\n");
 }
 
 // global image variables
@@ -245,7 +245,31 @@ size_t generate_signature(uint8_t** signature, char* filename, uint32_t file_siz
 	return sig_length;
 }
 
-void write_data(char* png_filename_in,char* png_filename_out, char* data_filename) {
+void confirm_file_overwrite(char* filename) {
+	char response;
+	do {
+		printf("File %s already exists. Would you like to overwrite it (y/N)? ", filename);
+		scanf("%c", &response);
+		printf("\n");
+
+		// flush rest of input to avoid multiple responses
+		fflush(stdin);
+	} while (response != 'y' && response != 'Y' && response != 'n' && response != 'N' && response != EOF);
+
+	if (response == 'N' || response == 'n') {
+		abort_msg("user exit");
+	}
+}
+
+void write_data(char* png_filename_in, char* png_filename_out, char* data_filename, int force_flag) {
+	// check if output file exists
+	if (access(png_filename_out, F_OK) != -1) {
+		// if exists and force flag isn't set, check that the user wants to override it
+		if (!force_flag) {
+			confirm_file_overwrite(png_filename_out);
+		}
+	}
+
 	// read png
 	read_png_file(png_filename_in);
 
@@ -361,7 +385,7 @@ void write_data(char* png_filename_in,char* png_filename_out, char* data_filenam
 	free(signature);
 }
 
-void read_data(char* filename) {
+void read_data(char* filename, int force_flag) {
 	// read png
 	read_png_file(filename);
 
@@ -451,6 +475,14 @@ void read_data(char* filename) {
 		}
 	}
 
+	// check if output file exists
+	if (access(data_filename, F_OK) != -1) {
+		// if exists and force flag isn't set, check that the user wants to override it
+		if (!force_flag) {
+			confirm_file_overwrite(data_filename);
+		}
+	}
+
 	// allocate space for data
 	data = (uint8_t*) malloc(sizeof(uint8_t) * data_file_size);
 
@@ -499,19 +531,23 @@ int main(int argc, char** argv) {
 	// TODO: parse command line flags
 	int read_flag = 0;
 	int write_flag = 0;
+	int force_flag = 0;
 	char* png_filename_in = NULL;
 	char* png_filename_out = NULL;
 	char* data_filename = NULL;
 	int arg;
 
 	// handle flags
-	while ((arg = getopt(argc, argv, "rwi:d:o:h?")) != -1) {
+	while ((arg = getopt(argc, argv, "rwfi:d:o:h?")) != -1) {
 		switch (arg) {
 			case 'r':
 				read_flag = 1;
 				break;
 			case 'w':
 				write_flag = 1;
+				break;
+			case 'f':
+				force_flag = 1;
 				break;
 			case 'i':
 				png_filename_in = optarg;
@@ -536,14 +572,14 @@ int main(int argc, char** argv) {
 			print_usage();
 			exit(1);
 		}
-		read_data(png_filename_in);
+		read_data(png_filename_in, force_flag);
 	} else if (write_flag) {
 		// all fields should be specified
 		if (!png_filename_in || !data_filename || !png_filename_out || read_flag) {
 			print_usage();
 			exit(1);
 		}
-		write_data(png_filename_in, png_filename_out, data_filename);
+		write_data(png_filename_in, png_filename_out, data_filename, force_flag);
 	} else {
 		// did not specify read or write you silly goose
 		print_usage();
