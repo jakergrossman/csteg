@@ -19,3 +19,19 @@ To decode files:
 ```
 csteg -r -i png_in
 ```
+
+Flag descriptors:
+```
+-f             do not prompt for confirmation when 
+               operation would overwrite existing files
+
+-w             write data to file
+
+-r             write data from file
+
+-i <filename>  specify input PNG file
+
+-d <filename>  specify input data file
+
+-o <filename>  specify output PNG file
+```
