@@ -274,7 +274,7 @@ void write_data(char* png_filename_in,char* png_filename_out, char* data_filenam
 
 	// if there is too much information
 	if ( required_data_bits > max_data_bits) {
-		abort_msg("write_data() : PNG is too small to fit %s", data_filename);
+		abort_msg("write_data() : PNG is too small to fit %s (%zu bytes required / %zu bytes free)", data_filename, required_data_bits / 8, max_data_bits / 8);
 	}
 
 	// declare variables for writing data
