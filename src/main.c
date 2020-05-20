@@ -115,7 +115,7 @@ void read_png_file(char* filename) {
 	// read pixel data
 	png_read_image(png_ptr, row_pointers);
 
-	// let the user know this file will be converted to RGBA
+	// abort if color type is not RGB or RGBA
 	if (color_type != PNG_COLOR_TYPE_RGB && color_type != PNG_COLOR_TYPE_RGBA) {
 		abort_msg("read_png_file() : File %s is not RGB or RGBA", filename);
 	}
@@ -312,7 +312,7 @@ void write_data(char* png_filename_in,char* png_filename_out, char* data_filenam
 		// clear two least significant bits of color channel
 		pixel[color_offset] &= 0xFC;
 		
-		// set two least signifcant bits of color channel
+		// set two least significant bits of color channel
 		pixel[color_offset] |= data_chunk;
 	}
 
@@ -343,7 +343,7 @@ void write_data(char* png_filename_in,char* png_filename_out, char* data_filenam
 		// clear two least significant bits of color channel
 		pixel[color_offset] &= 0xFC;
 		
-		// set two least signifcant bits of color channel
+		// set two least significant bits of color channel
 		pixel[color_offset] |= data_chunk;
 
 		// set update_data flag, if needed
