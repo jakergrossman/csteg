@@ -422,7 +422,7 @@ void read_data(char* filename, int force_flag) {
 	}
 
 	// read in length of file
-	start_pos = SIG_SIZE_BITS;
+	start_pos = end_pos;
 	end_pos = SIG_SIZE_BITS * 2;
 	for (i = start_pos; i < end_pos; i += 2) {
 		byte_offset = i / 6;
@@ -445,7 +445,7 @@ void read_data(char* filename, int force_flag) {
 	data_filename = (char*) malloc(sizeof(char) * data_filename_length);
 
 	// read in file name
-	start_pos = SIG_SIZE_BITS * 2;
+	start_pos = end_pos;
 	end_pos = SIG_SIZE_BITS * 2 + data_filename_length * 8;
 	for (i = start_pos; i < end_pos; i += 2) {
 		byte_offset = i / 6;
@@ -499,7 +499,7 @@ void read_data(char* filename, int force_flag) {
 
 		data[data_pos] |= ((pixel[color_offset] & 0x3) << bit_offset);
 
-		// if bit_offset is 0, we have finished writing this byte, update filename_pos
+		// if bit_offset is 0, we have finished writing this byte, update data_pos
 		if (bit_offset == 0) {
 			data_pos++;
 		}
