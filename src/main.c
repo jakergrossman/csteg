@@ -341,19 +341,13 @@ void write_data(char* png_filename_in, char* png_filename_out, char* data_filena
 	}
 
 	// write data
-	int update_data = 1; // update_data flag. Set if data_byte needs to be updated
+	fread(&data_byte, 1, 1, file_ptr);
 	while (i < required_data_bits) {
-		if (update_data) {
-			fread(&data_byte, 1, 1, file_ptr);	
-			update_data = 0;
-		}
-
 		byte_offset = i / 6;
 		bit_offset = 6 - (i % 8);
 		color_offset = (i / 2) % 3;
 		x = byte_offset % width;
 		y = byte_offset / width;
-
 
 		data_chunk = (data_byte & (0x3 << bit_offset)) >> bit_offset;
 
@@ -370,9 +364,9 @@ void write_data(char* png_filename_in, char* png_filename_out, char* data_filena
 		// set two least significant bits of color channel
 		pixel[color_offset] |= data_chunk;
 
-		// set update_data flag, if needed
+		// update data if current data has been consumed
 		if (bit_offset == 0) {
-			update_data = 1;
+			fread(&data_byte, 1, 1, file_ptr);
 		}
 
 		i += 2;
