@@ -522,7 +522,6 @@ void read_data(char* filename, int force_flag) {
 }
 
 int main(int argc, char** argv) {
-	// TODO: parse command line flags
 	int read_flag = 0;
 	int write_flag = 0;
 	int force_flag = 0;
@@ -554,6 +553,7 @@ int main(int argc, char** argv) {
 				break;
 			case 'h': // fall through intentional
 			case '?':
+				print_usage();
 				exit(1);
 				break;
 		}
